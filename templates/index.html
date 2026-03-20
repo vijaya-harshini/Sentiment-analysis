@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sentiment Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            width: 500px;
+            margin: 40px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0px 8px 20px rgba(0,0,0,0.3);
+        }
+
+        textarea {
+            width: 90%;
+            height: 120px;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            background: #00c9a7;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cards {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .card {
+            width: 30%;
+            padding: 10px;
+            border-radius: 10px;
+            color: black;
+        }
+
+        .positive { background: #d4edda; }
+        .negative { background: #f8d7da; }
+        .neutral { background: #fff3cd; }
+
+        img {
+            margin-top: 20px;
+            width: 300px;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            background: white;
+            color: black;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid gray;
+        }
+
+        .footer {
+            font-size: 12px;
+            margin-top: 10px;
+            color: #ddd;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>📊 Customer Review Analytics</h2>
+
+    <form method="POST">
+        <textarea name="review" placeholder="Enter multiple reviews (one per line)" required></textarea><br>
+        <button type="submit">Analyze</button>
+    </form>
+
+    {% if result %}
+        <div class="cards">
+            <div class="card positive">
+                <h4>Positive</h4>
+                <p>{{ result.positive }}</p>
+                <small>{{ result.pos_percent }}%</small>
+            </div>
+
+            <div class="card negative">
+                <h4>Negative</h4>
+                <p>{{ result.negative }}</p>
+                <small>{{ result.neg_percent }}%</small>
+            </div>
+
+            <div class="card neutral">
+                <h4>Neutral</h4>
+                <p>{{ result.neutral }}</p>
+                <small>{{ result.neu_percent }}%</small>
+            </div>
+        </div>
+
+        <img src="{{ url_for('static', filename='chart.png') }}">
+
+        <div class="footer">
+            NLP-based sentiment analysis using TextBlob
+        </div>
+    {% endif %}
+
+    {% if data %}
+        <h3>📋 Saved Reviews</h3>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Review</th>
+                <th>Sentiment</th>
+            </tr>
+
+            {% for row in data %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>
+                <a href="/delete/{{ row[0] }}">
+                    <button style="background:red;">Delete</button>
+                </a>
+            </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+</div>
+
+</body>
+</html>
